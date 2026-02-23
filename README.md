@@ -28,7 +28,7 @@ php bin/console make:migration
 ### Write SQL Queries to DB
 
 ```bash
-php bin/console doctrine:migrations:migration
+php bin/console doctrine:migrations:migrate
 ```
 
 ## Tips
