@@ -17,6 +17,13 @@ To stop
   docker compose down --remove-orphans
 ```
 
+Create DB
+
+```bash
+php bin/console make:migration
+php bin/console doctrine:migrations:migration
+```
+
 ## Tips
 
 - `composer require symfony/maker-bundle`
