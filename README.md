@@ -1,4 +1,4 @@
-# CORE6
+# CORE7
 
 ```bash
   docker compose build --pull --no-cache
@@ -6,7 +6,7 @@
 ```
 
 ```bash
-  docker exec -it webt_25-26_06-core-php-1 bash
+  docker exec -it webt_25-26_07-core-php-1 bash
   git config --global --add safe.directory /app
   composer install
 ```
