@@ -11,16 +11,23 @@
   composer install
 ```
 
-To stop
+## To stop
 
 ```bash
   docker compose down --remove-orphans
 ```
 
-Create DB
+## Create DB
+
+### Create new SQL Queries from Entities
 
 ```bash
 php bin/console make:migration
+```
+
+### Write SQL Queries to DB
+
+```bash
 php bin/console doctrine:migrations:migration
 ```
 
