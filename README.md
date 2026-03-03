@@ -1,20 +1,20 @@
 # CORE7
 
 ```bash
-  docker compose build --pull --no-cache
-  docker compose up --wait
+docker compose build --pull --no-cache
+docker compose up --wait
 ```
 
 ```bash
-  docker exec -it webt_25-26_07-core-php-1 bash
-  git config --global --add safe.directory /app
-  composer install
+docker exec -it webt_25-26_07-core-php-1 bash
+git config --global --add safe.directory /app
+composer install
 ```
 
 ## To stop
 
 ```bash
-  docker compose down --remove-orphans
+docker compose down --remove-orphans
 ```
 
 ## Create DB
@@ -22,13 +22,18 @@
 ### Create new SQL Queries from Entities
 
 ```bash
-php bin/console make:migration
+ docker exec -it webt_25-26_07-core-php-1 php bin/console make:migration
 ```
 
 ### Write SQL Queries to DB
 
 ```bash
-php bin/console doctrine:migrations:migrate
+ docker exec -it webt_25-26_07-core-php-1 php bin/console doctrine:migrations:migrate
+```
+
+### Load Fixtures
+```bash
+ docker exec -it webt_25-26_07-core-php-1 php bin/console doctrine:fixtures:load
 ```
 
 ## Tips
