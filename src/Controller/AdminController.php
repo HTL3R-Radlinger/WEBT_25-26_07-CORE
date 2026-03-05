@@ -18,8 +18,19 @@ final class AdminController extends AbstractController
     {
         $meal = new Meal();
         $form = $this->createForm(MealType::class, $meal);
-        return $this->render('admin/index.html.twig', [
-            'controller_name' => 'AdminController',
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($meal);
+            $em->flush();
+
+            $this->addFlash('success', 'Meal added successfully!');
+            return $this->redirectToRoute('data_meals');
+        }
+
+        return $this->render('admin/meal_add.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }

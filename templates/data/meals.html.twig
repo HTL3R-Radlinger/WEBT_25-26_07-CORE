@@ -7,7 +7,6 @@
         <h2>{{ meal.name }}</h2>
         <div>{{ meal.allergens }}</div>
         <div>{{ meal.nutritionalInfo }}</div>
-        <div>{{ meal.date|date('d. M. Y') }}</div> {# Convert Datetime objekt to string #}
         <hr>
     {% endfor %}
 {% endblock %}

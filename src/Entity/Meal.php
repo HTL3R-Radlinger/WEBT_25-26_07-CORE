@@ -23,9 +23,6 @@ class Meal
     #[ORM\Column(length: 255)]
     private ?string $nutritionalInfo = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $date = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -63,18 +60,6 @@ class Meal
     public function setNutritionalInfo(string $nutritionalInfo): static
     {
         $this->nutritionalInfo = $nutritionalInfo;
-
-        return $this;
-    }
-
-    public function getDate(): ?\DateTime
-    {
-        return $this->date;
-    }
-
-    public function setDate(\DateTime $date): static
-    {
-        $this->date = $date;
 
         return $this;
     }
