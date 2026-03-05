@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Data{% endblock %}
+
+{% block content %}
+    {% for meal in meals %}
+        <h2>{{ meal.name }}</h2>
+        <div>{{ meal.allergens }}</div>
+        <div>{{ meal.nutritionalInfo }}</div>
+        <div>{{ meal.date|date('d. M. Y') }}</div> {# Convert Datetime objekt to string #}
+        <hr>
+    {% endfor %}
+{% endblock %}

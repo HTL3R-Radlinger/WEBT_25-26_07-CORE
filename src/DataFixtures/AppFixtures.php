@@ -20,7 +20,7 @@ class AppFixtures extends Fixture
             $meal->setName($mealNames[$i]);
             $meal->setNutritionalInfo("Calories: " . rand(400, 700));
             $meal->setAllergens("Gluten, Lactose");
-            $meal->setDate(new DateTime());
+            $meal->setDate($this->randomPastDate());
             $meals[] = $meal;
             $manager->persist($meal);
         }
