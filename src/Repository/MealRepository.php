@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Meal;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,23 +18,34 @@ class MealRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Meal[] Returns an array of Meal objects
+     * @param string|null $name
+     * @param string $sortBy
+     * @param string $order
+     * @param int $page
+     * @param int $limit
+     * @return Paginator Returns an array of Meal objects
      */
-    public function findAll(): array
+    public function findMeals(?string $name, string $sortBy = 'name', string $order = 'ASC', int $page = 1, int $limit = 10): Paginator
     {
-        return $this->createQueryBuilder('m')
-            ->orderBy('m.id', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
+        $qb = $this->createQueryBuilder('m');
 
-    //    public function findOneBySomeField($value): ?Meal
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if ($name) {
+            $qb->andWhere('m.name LIKE :name')
+                ->setParameter('name', '%' . $name . '%');
+        }
+
+        $allowedSortFields = ['name'];
+        if (!in_array($sortBy, $allowedSortFields)) {
+            $sortBy = 'name';
+        }
+
+        $order = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
+        $qb->orderBy('m.' . $sortBy, $order);
+
+        // Pagination
+        $qb->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        return new Paginator($qb, true);
+    }
 }

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Meal List{% endblock %}
+
+{% block content %}
+    <h1>Meal List</h1>
+
+    <form method="get">
+        <input type="text" name="name" placeholder="Search by name" value="{{ app.request.query.get('name') }}">
+        <button type="submit">Filter</button>
+    </form>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                <a href="?sortBy=name&order={{ app.request.query.get('order') == 'ASC' ? 'DESC' : 'ASC' }}">Name</a>
+            </th>
+            <th>Allergens</th>
+            <th>Nutritional Info</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for meal in meals %}
+            <tr>
+                <td>{{ meal.name }}</td>
+                <td>{{ meal.allergens }}</td>
+                <td>{{ meal.nutritionalInfo }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">No meals found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+        {% if currentPage > 1 %}
+            <a href="?page={{ currentPage - 1 }}">Previous</a>
+        {% endif %}
+        Page {{ currentPage }} of {{ totalPages }}
+        {% if currentPage < totalPages %}
+            <a href="?page={{ currentPage + 1 }}">Next</a>
+        {% endif %}
+    </div>
+
+{% endblock %}
