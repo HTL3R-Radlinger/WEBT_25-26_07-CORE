@@ -10,6 +10,7 @@ docker exec -it webt_25-26_07-core-php-1 bash
 git config --global --add safe.directory /app
 composer install
 ```
+### composer require symfony/form
 
 ## To stop
 
