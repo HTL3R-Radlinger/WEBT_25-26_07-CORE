@@ -13,7 +13,13 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/admin')]
 final class AdminController extends AbstractController
 {
-    #[Route('/meals/new', name: 'meal_new')]
+    #[Route('/', name: 'admin_page', methods: ['GET'])]
+    public function index(): Response
+    {
+        return $this->render('admin/index.html.twig');
+    }
+
+    #[Route('/meals/add', name: 'meal_add')]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
         $meal = new Meal();
@@ -26,7 +32,7 @@ final class AdminController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Meal added successfully!');
-            return $this->redirectToRoute('data_meals');
+            return $this->redirectToRoute('data_meals_list');
         }
 
         return $this->render('admin/meal_add.html.twig', [

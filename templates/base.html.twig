@@ -12,7 +12,7 @@
 <body>
 
 {# Includes the header template. #}
-{% include 'header.html.twig' %}
+{% include 'header.html.twig' with {'admin': admin|default(false)} %} {# if not provided -> 'false' #}
 
 <main>
     {#
