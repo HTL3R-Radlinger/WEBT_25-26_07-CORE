@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Meal{% endblock %}
+
+{% block content %}
+    <h1>Edit Meal</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for meal in meals %}
+            <tr>
+                <td>{{ meal.name }}</td>
+                <td>
+                    <form method="post" action="{{ path('meal_edit_by_id', {'id': meal.id}) }}">
+                        <button>Edit</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

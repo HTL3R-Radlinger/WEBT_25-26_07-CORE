@@ -36,26 +36,28 @@ final class AdminController extends AbstractController
             return $this->redirectToRoute('data_meals_list');
         }
 
-        return $this->render('admin/meal_add.html.twig', [
+        return $this->render('admin/meal/add.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route('/meals/edit', name: 'meal_edit')]
-    public function edit(Request $request, EntityManagerInterface $em): Response
+    #[Route('/meals/select/edit', name: 'meal_edit')]
+    public function edit_selection(MealRepository $mealRepository): Response
     {
-        return $this->render('admin/meal_edit.html.twig');
+        return $this->render('admin/meal/select/edit.html.twig', [
+            'meals' => $mealRepository->findAll(),
+        ]);
     }
 
     #[Route('/meals/delete', name: 'meal_delete')]
     public function delete(MealRepository $mealRepository): Response
     {
-        return $this->render('admin/meal_delete.html.twig', [
+        return $this->render('admin/meal/select/delete.html.twig', [
             'meals' => $mealRepository->findAll(),
         ]);
     }
 
-    #[Route('/admin/meals/{id}/delete', name: 'meal_delete_by_id', methods: ['POST'])]
+    #[Route('/meals/{id}/delete', name: 'meal_delete_by_id', methods: ['POST'])]
     public function delete_meal(Meal $meal, EntityManagerInterface $em): Response
     {
         $em->remove($meal);

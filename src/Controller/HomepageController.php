@@ -27,9 +27,7 @@ final class HomepageController extends AbstractController
 //        $response->headers->set('X-Custom-Header', 'value');
 //        return $response;
 
-        return $this->render('home.html.twig', [
-            'admin' => true,
-        ]);
+        return $this->render('home.html.twig');
     }
 }
 
