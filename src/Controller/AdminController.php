@@ -21,7 +21,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/meals/add', name: 'meal_add')]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    public function add(Request $request, EntityManagerInterface $em): Response
     {
         $meal = new Meal();
         $form = $this->createForm(MealType::class, $meal);
@@ -31,34 +31,42 @@ final class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($meal);
             $em->flush();
-
-            $this->addFlash('success', 'Meal added successfully!');
             return $this->redirectToRoute('data_meals_list');
         }
 
-        return $this->render('admin/meal/add.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        return $this->render('admin/meal/add.html.twig', ['form' => $form->createView()]);
     }
 
     #[Route('/meals/select/edit', name: 'meal_edit')]
     public function edit_selection(MealRepository $mealRepository): Response
     {
-        return $this->render('admin/meal/select/edit.html.twig', [
-            'meals' => $mealRepository->findAll(),
-        ]);
+        return $this->render('admin/meal/select/edit.html.twig', ['meals' => $mealRepository->findAll()]);
     }
 
-    #[Route('/meals/delete', name: 'meal_delete')]
-    public function delete(MealRepository $mealRepository): Response
+    #[Route('/meals/{id}/edit', name: 'meal_edit_by_id')]
+    public function edit(Meal $meal, Request $request, EntityManagerInterface $em, MealRepository $mealRepository): Response
     {
-        return $this->render('admin/meal/select/delete.html.twig', [
-            'meals' => $mealRepository->findAll(),
-        ]);
+        $form = $this->createForm(MealType::class, $meal);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Meal edited successfully!');
+            return $this->redirectToRoute('data_meals_list');
+        }
+
+        return $this->render('admin/meal/edit.html.twig', ['form' => $form->createView()]);
+    }
+
+    #[Route('/meals/select/delete', name: 'meal_delete')]
+    public function delete_selection(MealRepository $mealRepository): Response
+    {
+        return $this->render('admin/meal/select/delete.html.twig', ['meals' => $mealRepository->findAll(),]);
     }
 
     #[Route('/meals/{id}/delete', name: 'meal_delete_by_id', methods: ['POST'])]
-    public function delete_meal(Meal $meal, EntityManagerInterface $em): Response
+    public function delete(Meal $meal, EntityManagerInterface $em): Response
     {
         $em->remove($meal);
         $em->flush();

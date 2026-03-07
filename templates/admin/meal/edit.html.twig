@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Meal{% endblock %}
+
+{% block content %}
+    <h1>Edit Meal</h1>
+
+    {{ include('admin/meal/form.html.twig', {
+        form: form,
+        button_label: 'Update Meal',
+        alert_text: 'Meal successfully updated!'
+    }) }}
+
+{% endblock %}

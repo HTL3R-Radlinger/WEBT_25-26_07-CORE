@@ -5,12 +5,10 @@
 {% block content %}
     <h1>Create New Meal</h1>
 
-    {{ form_start(form) }}
-    {{ form_row(form.name) }}
-    {{ form_row(form.allergens) }}
-    {{ form_row(form.nutritionalInfo) }}
-
-    <button type="submit">Save</button>
-    {{ form_end(form) }}
+    {{ include('admin/meal/form.html.twig', {
+        form: form,
+        button_label: 'Create Meal',
+        alert_text: 'Meal successfully added!'
+    }) }}
 
 {% endblock %}

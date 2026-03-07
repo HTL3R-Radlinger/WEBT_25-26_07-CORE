@@ -1,0 +1,20 @@
+{{ form_start(form, {
+    attr: {
+        onsubmit: "return showSubmitInfo()"
+    }
+}) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.allergens) }}
+    {{ form_row(form.nutritionalInfo) }}
+
+<button class="btn btn-success">
+    {{ button_label|default('Save') }}
+</button>
+
+<script>
+    function showSubmitInfo() {
+        alert("{{ alert_text }}");
+        return true;
+    }
+</script>
+{{ form_end(form) }}
