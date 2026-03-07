@@ -4,8 +4,14 @@
     }
 }) }}
     {{ form_row(form.name) }}
-    {{ form_row(form.allergens) }}
-    {{ form_row(form.nutritionalInfo) }}
+
+<fieldset>
+    <legend>{{ form_label(form.allergens) }}</legend>
+    {{ form_widget(form.allergens) }}
+    {{ form_errors(form.allergens) }}
+</fieldset>
+
+{{ form_row(form.nutritionalInfo) }}
 
 <button class="btn btn-success">
     {{ button_label|default('Save') }}

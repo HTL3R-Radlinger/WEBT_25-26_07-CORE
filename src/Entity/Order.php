@@ -12,6 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: '`order`')]
 class Order
 {
+    public const string STATUS_PENDING = 'pending';
+    public const string STATUS_CONFIRMED = 'confirmed';
+    public const string STATUS_PREPARING = 'preparing';
+    public const string STATUS_READY = 'ready';
+    public const string STATUS_DELIVERED = 'delivered';
+    public const string STATUS_CANCELLED = 'cancelled';
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -32,6 +38,9 @@ class Order
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $buyer = null;
+
+    #[ORM\Column(length: 20, options: ['default' => 'pending'])]
+    private string $status = self::STATUS_PENDING;
 
     public function __construct()
     {
@@ -100,6 +109,21 @@ class Order
     {
         $this->buyer = $buyer;
 
+        return $this;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $allowed = [self::STATUS_PENDING, self::STATUS_CONFIRMED, self::STATUS_PREPARING, self::STATUS_READY, self::STATUS_DELIVERED, self::STATUS_CANCELLED,];
+        if (!in_array($status, $allowed)) {
+            throw new \InvalidArgumentException("Invalid status: $status");
+        }
+        $this->status = $status;
         return $this;
     }
 }

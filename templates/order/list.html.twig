@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders{% endblock %}
+
+{% block content %}
+    <h1>Order Tracking</h1>
+
+    {# Status-Overview #}
+    <div class="status-overview">
+        <h3>Overview:</h3>
+        {% for stat in statusCounts %}
+            <span class="badge badge-{{ stat.status }}">
+            {{ stat.status }}: {{ stat.total }}
+        </span>
+        {% endfor %}
+    </div>
+
+    {# Filter #}
+    <form method="get" action="{{ path('order_list') }}">
+        <label>Status:</label>
+        <select name="status">
+            <option value="">Alle</option>
+            <option value="pending" {{ currentStatus == 'pending' ? 'selected' : '' }}>Pending</option>
+            <option value="confirmed" {{ currentStatus == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+            <option value="preparing" {{ currentStatus == 'preparing' ? 'selected' : '' }}>Preparing</option>
+            <option value="ready" {{ currentStatus == 'ready' ? 'selected' : '' }}>Ready</option>
+            <option value="delivered" {{ currentStatus == 'delivered' ? 'selected' : '' }}>Delivered</option>
+            <option value="cancelled" {{ currentStatus == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+
+    {# Order-Table #}
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Buyer</th>
+            <th>Meals</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.date|date('d.m.Y') }}</td>
+                <td>{{ order.buyer.name }}</td>
+                <td>
+                    {% for meal in order.meals %}
+                        {{ meal.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ order.price }}€</td>
+                <td><span class="badge badge-{{ order.status }}">{{ order.status }}</span></td>
+                <td>
+                    <form method="post" action="{{ path('order_update_status', {id: order.id}) }}">
+                        <select name="status">
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="preparing">Preparing</option>
+                            <option value="ready">Ready</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <button type="submit">Update</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Keine Orders gefunden.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {# Pagination #}
+    {% if totalPages > 1 %}
+        <nav>
+            {% for p in 1..totalPages %}
+                <a href="{{ path('order_list', app.request.query.all|merge({page: p})) }}"
+                   class="{{ p == currentPage ? 'active' : '' }}">{{ p }}</a>
+            {% endfor %}
+        </nav>
+    {% endif %}
+{% endblock %}

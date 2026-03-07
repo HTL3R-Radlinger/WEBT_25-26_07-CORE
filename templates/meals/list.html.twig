@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Meal List{% endblock %}
+
+{% block content %}
+    <h1>Meal List</h1>
+
+    {# Allergen-Filter Formular #}
+    <form method="get" action="{{ path('data_meals_list') }}">
+        <label>Suche nach Name:</label>
+        <input type="text" name="name" value="{{ app.request.query.get('name') }}">
+
+        <fieldset>
+            <legend>Allergene ausschließen:</legend>
+            {% for allergen in allergens %}
+                <label>
+                    <input type="checkbox" name="excludeAllergens[]" value="{{ allergen.id }}"
+                        {{ allergen.id in excludeAllergens ? 'checked' : '' }}>
+                    {{ allergen.code }}
+                </label>
+            {% endfor %}
+        </fieldset>
+
+        <label>Sortieren nach:</label>
+        <select name="sortBy">
+            <option value="name" {{ app.request.query.get('sortBy') == 'name' ? 'selected' : '' }}>Name</option>
+            <option value="id" {{ app.request.query.get('sortBy') == 'id' ? 'selected' : '' }}>ID</option>
+        </select>
+
+        <select name="order">
+            <option value="ASC">Aufsteigend</option>
+            <option value="DESC">Absteigend</option>
+        </select>
+
+        <button type="submit">Filtern</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Allergene</th>
+            <th>Nährwertinfo</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for meal in meals %}
+            <tr>
+                <td>{{ meal.name }}</td>
+                <td>
+                    {% for allergen in meal.allergens %}
+                        <span class="badge">{{ allergen.code }}</span>
+                    {% endfor %}
+                </td>
+                <td>{{ meal.nutritionalInfo }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Keine Meals gefunden.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {# Pagination #}
+    {% if totalPages > 1 %}
+        <nav>
+            {% for p in 1..totalPages %}
+                <a href="{{ path('data_meals_list', app.request.query.all|merge({page: p})) }}"
+                   class="{{ p == currentPage ? 'active' : '' }}">{{ p }}</a>
+            {% endfor %}
+        </nav>
+    {% endif %}
+{% endblock %}

@@ -26,14 +26,24 @@ class MealRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string|null $name
-     * @param string $sortBy
-     * @param string $order
-     * @param int $page
-     * @param int $limit
+     * Erweiterte Suche mit Allergen-Filterung
+     *
+     * @param string|null $name Namesearch
+     * @param array $excludeAllergens Allergen-IDs which are EXCLUDED
+     * @param string $sortBy Sort field
+     * @param string $order ASC or DESC
+     * @param int $page Page number
+     * @param int $limit Rows per Page
      * @return Paginator Returns an array of Meal objects
      */
-    public function findMeals(?string $name, string $sortBy = 'name', string $order = 'ASC', int $page = 1, int $limit = 10): Paginator
+    public function findMeals(
+        ?string $name,
+        array   $excludeAllergens = [],
+        string  $sortBy = 'name',
+        string  $order = 'ASC',
+        int     $page = 1,
+        int     $limit = 10
+    ): Paginator
     {
         $qb = $this->createQueryBuilder('m');
 
@@ -42,7 +52,19 @@ class MealRepository extends ServiceEntityRepository
                 ->setParameter('name', '%' . $name . '%');
         }
 
-        $allowedSortFields = ['name'];
+        // Allergen-Filter: EXCLUDE Meals with specific Allergenes
+        if (!empty($excludeAllergens)) {
+            $subQb = $this->createQueryBuilder('m2')
+                ->select('m2.id')
+                ->innerJoin('m2.allergens', 'a')
+                ->where('a.id IN (:excludeAllergens)');
+
+            $qb->andWhere($qb->expr()->notIn('m.id', $subQb->getDQL()))
+                ->setParameter('excludeAllergens', $excludeAllergens);
+        }
+
+        // Sorting
+        $allowedSortFields = ['name', 'id', 'allergens'];
         if (!in_array($sortBy, $allowedSortFields)) {
             $sortBy = 'name';
         }

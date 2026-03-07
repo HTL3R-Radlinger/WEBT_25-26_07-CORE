@@ -17,11 +17,11 @@ final class OrderController extends AbstractController
     public function list(Request $request, OrderRepository $orderRepository): Response
     {
         $status = $request->query->get('status');
-        $buyerId = $request->query->get('buyer') ? (int) $request->query->get('buyer') : null;
+        $buyerId = $request->query->get('buyer') ? (int)$request->query->get('buyer') : null;
         $sortBy = $request->query->get('sortBy', 'date');
         $order = $request->query->get('order', 'DESC');
-        $page = max((int) $request->query->get('page', 1), 1);
-        $limit = 10;
+        $page = max((int)$request->query->get('page', 1), 1);
+        $limit = 3;
 
         $paginator = $orderRepository->findByStatus($status, $buyerId, $sortBy, $order, $page, $limit);
         $statusCounts = $orderRepository->countByStatus();
