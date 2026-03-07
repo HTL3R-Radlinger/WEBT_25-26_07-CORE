@@ -3,7 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MealRepository;
-use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MealRepository::class)]
@@ -18,10 +19,18 @@ class Meal
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $allergens = null;
-
-    #[ORM\Column(length: 255)]
     private ?string $nutritionalInfo = null;
+
+    /**
+     * @var Collection<int, Allergens>
+     */
+    #[ORM\ManyToMany(targetEntity: Allergens::class, mappedBy: 'meals')]
+    private Collection $allergens;
+
+    public function __construct()
+    {
+        $this->allergens = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -40,18 +49,6 @@ class Meal
         return $this;
     }
 
-    public function getAllergens(): ?string
-    {
-        return $this->allergens;
-    }
-
-    public function setAllergens(string $allergens): static
-    {
-        $this->allergens = $allergens;
-
-        return $this;
-    }
-
     public function getNutritionalInfo(): ?string
     {
         return $this->nutritionalInfo;
@@ -60,6 +57,33 @@ class Meal
     public function setNutritionalInfo(string $nutritionalInfo): static
     {
         $this->nutritionalInfo = $nutritionalInfo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Allergens>
+     */
+    public function getAllergens(): Collection
+    {
+        return $this->allergens;
+    }
+
+    public function addAllergen(Allergens $allergen): static
+    {
+        if (!$this->allergens->contains($allergen)) {
+            $this->allergens->add($allergen);
+            $allergen->addMeal($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAllergen(Allergens $allergen): static
+    {
+        if ($this->allergens->removeElement($allergen)) {
+            $allergen->removeMeal($this);
+        }
 
         return $this;
     }
