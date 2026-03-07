@@ -22,9 +22,9 @@ class Meal
     private ?string $nutritionalInfo = null;
 
     /**
-     * @var Collection<int, Allergens>
+     * @var Collection<int, Allergen>
      */
-    #[ORM\ManyToMany(targetEntity: Allergens::class, mappedBy: 'meals')]
+    #[ORM\ManyToMany(targetEntity: Allergen::class, inversedBy: 'meals')]
     private Collection $allergens;
 
     public function __construct()
@@ -62,28 +62,25 @@ class Meal
     }
 
     /**
-     * @return Collection<int, Allergens>
+     * @return Collection<int, Allergen>
      */
     public function getAllergens(): Collection
     {
         return $this->allergens;
     }
 
-    public function addAllergen(Allergens $allergen): static
+    public function addAllergen(Allergen $allergen): static
     {
         if (!$this->allergens->contains($allergen)) {
             $this->allergens->add($allergen);
-            $allergen->addMeal($this);
         }
 
         return $this;
     }
 
-    public function removeAllergen(Allergens $allergen): static
+    public function removeAllergen(Allergen $allergen): static
     {
-        if ($this->allergens->removeElement($allergen)) {
-            $allergen->removeMeal($this);
-        }
+        $this->allergens->removeElement($allergen);
 
         return $this;
     }

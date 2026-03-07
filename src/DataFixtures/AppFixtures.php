@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Allergen;
 use App\Entity\User;
 use App\Entity\Order;
 use App\Entity\Meal;
@@ -13,13 +14,25 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
+        $allergenCodes = ["A", "C", "D", "F", "G", "M", "N"];
+        $allergens = array();
+        for ($i = 0; $i < count($allergenCodes); $i++) {
+            $allergen = new Allergen();
+            $allergen->setCode($allergenCodes[$i]);
+            $allergens[] = $allergen;
+            $manager->persist($allergen);
+        }
+
         $mealNames = ["Pizza", "Burger", "Nudeln", "Maki", "Wiener Schnitzel mit Erdäpfelsalat"];
         $meals = array();
         for ($i = 0; $i < count($mealNames); $i++) {
             $meal = new Meal();
             $meal->setName($mealNames[$i]);
             $meal->setNutritionalInfo("Calories: " . rand(400, 700));
-            $meal->setAllergens("Gluten, Lactose");
+            $anzAllergens = rand(1, 5);
+            for ($j = 0; $j < $anzAllergens; $j++) {
+                $meal->addAllergen($allergens[rand(0, count($allergens) - 1)]);
+            }
             $meals[] = $meal;
             $manager->persist($meal);
         }
