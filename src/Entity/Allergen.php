@@ -21,6 +21,7 @@ use Doctrine\ORM\Mapping as ORM;
  * - This is the "inverse" side of the relationship (Meal is the "owning" side)
  */
 #[ORM\Entity(repositoryClass: AllergenRepository::class)]
+#[ORM\Table(name: '`allergen`')]
 class Allergen
 {
     /**

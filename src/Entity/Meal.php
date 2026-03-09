@@ -22,6 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  * - Many-to-Many with Allergen (one meal can have multiple allergens)
  */
 #[ORM\Entity(repositoryClass: MealRepository::class)]
+#[ORM\Table(name: '`meal`')]
 class Meal
 {
     /**
