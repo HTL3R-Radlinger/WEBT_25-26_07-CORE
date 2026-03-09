@@ -45,6 +45,72 @@ class MealRepository extends ServiceEntityRepository
             ->getQuery()               // Convert to Query object
             ->getResult();             // Execute and return results as array
     }
+    /**
+     * DQL Variant
+     * public function findAll(): array
+     * {
+     *      return $this->getEntityManager()
+     *      ->createQuery(
+     *      'SELECT m
+     *      FROM App\Entity\Meal m
+     *      ORDER BY m.id ASC'
+     *      )
+     *      ->getResult();
+     * }
+     */
+
+    /**
+     * FetchAssociative
+     *
+     * public function findMealById(int $id, EntityManagerInterface $em)
+     * {
+     *      $conn = $em->getConnection();
+     *
+     *      $sql = "SELECT id, name, price FROM meal WHERE id = :id";
+     *
+     *      $result = $conn->executeQuery($sql, [
+     *          'id' => $id
+     *      ]);
+     *
+     *      return $result->fetchAssociative();
+     * }
+     *
+     * Output:
+     * [
+     *  "id" => 1,
+     *  "name" => "Pizza",
+     *  "price" => 9.90
+     * ]
+     */
+
+    /**
+     * public function countMeals(EntityManagerInterface $em)
+     * {
+     *      $conn = $em->getConnection();
+     *      $sql = "SELECT COUNT(*) FROM meal";
+     *      return $conn->executeQuery($sql)->fetchOne();
+     * }
+     *
+     * Output:
+     * 12
+     */
+
+    /**
+     * public function findFirstMeal(EntityManagerInterface $em)
+     * {
+     *      $conn = $em->getConnection();
+     *      $sql = "SELECT id, name, price FROM meal LIMIT 1";
+     *      return $conn->executeQuery($sql)->fetchNumeric();
+     * }
+     *
+     * Output:
+     * [
+     *  0 => 1,
+     *  1 => "Pizza",
+     *  2 => 9.9
+     * ]
+     */
+
 
     /**
      * Advanced Meal Search with Filtering, Sorting, and Pagination
