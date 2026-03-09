@@ -5,6 +5,12 @@
 {% block content %}
     <h1>Edit Meal</h1>
 
+    {#
+    ===== MEALS TABLE =====
+
+    Displays all meals in a simple table format
+    CSS class "table" likely provides styling from CSS framework (Bootstrap, etc.)
+    #}
     <table class="table">
         <thead>
         <tr>
@@ -13,9 +19,21 @@
         </tr>
         </thead>
         <tbody>
+        {#
+        Loop through all meals
+
+        meals variable: Array of Meal entities from MealRepository::findAll()
+        Each iteration, 'meal' contains one Meal object
+        #}
         {% for meal in meals %}
             <tr>
+                {#
+                Display meal name
+
+                {{ meal.name }}: Calls $meal->getName() in PHP
+                #}
                 <td>{{ meal.name }}</td>
+
                 <td>
                     <form method="post" action="{{ path('meal_edit_by_id', {'id': meal.id}) }}">
                         <button>Edit</button>

@@ -5,6 +5,12 @@
 {% block content %}
     <h1>Delete Meal</h1>
 
+    {#
+    ===== MEALS TABLE =====
+
+    Displays all meals with delete buttons
+    CSS class "table" provides styling
+    #}
     <table class="table">
         <thead>
         <tr>
@@ -13,12 +19,20 @@
         </tr>
         </thead>
         <tbody>
+        {#
+        Loop through all meals
+
+        meals variable: Array of Meal entities
+        #}
         {% for meal in meals %}
             <tr>
+                {# Display meal name #}
                 <td>{{ meal.name }}</td>
                 <td>
                     <form method="post" action="{{ path('meal_delete_by_id', {'id': meal.id}) }}"
                           onsubmit="return confirm('Are you sure you want to delete this meal?');">
+
+                        {# Delete Button #}
                         <button class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </td>
