@@ -5,6 +5,23 @@
 {% block content %}
     <h1>Edit Meal</h1>
 
+    {#
+    ===== INCLUDE SHARED FORM TEMPLATE =====
+
+    include() function: Renders the reusable form template
+
+    This is the SAME template used by the "add" page, but with different parameters:
+
+    Comparison:
+    Add Page:
+      button_label: 'Create Meal'
+      alert_text: 'Meal successfully added!'
+
+    Edit Page (this template):
+      button_label: 'Update Meal'
+      alert_text: 'Meal successfully updated!'
+    #}
+    
     {{ include('admin/meal/form.html.twig', {
         form: form,
         button_label: 'Update Meal',

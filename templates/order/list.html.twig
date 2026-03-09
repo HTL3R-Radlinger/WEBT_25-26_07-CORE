@@ -5,21 +5,71 @@
 {% block content %}
     <h1>Order Tracking</h1>
 
-    {# Status-Overview #}
+    {# ===== STATUS OVERVIEW SECTION ===== #}
+    {#
+    This section displays a summary showing how many orders are in each status
+    Example display: "pending: 5  confirmed: 12  preparing: 8  ready: 3"
+
+    Useful for quickly seeing order workload at a glance
+    #}
     <div class="status-overview">
         <h3>Overview:</h3>
+        {#
+        Loop through status statistics
+        Each 'stat' object has properties: status, total
+
+        Example stat object:
+        {
+            status: 'pending',
+            total: 5
+        }
+        #}
         {% for stat in statusCounts %}
+            {#
+            Display each status with its count as a badge
+
+            class="badge badge-{{ stat.status }}":
+            - Dynamic class based on status
+            - Example: class="badge badge-pending"
+            - CSS can color-code each status differently
+
+            Output example: <span class="badge badge-pending">pending: 5</span>
+            #}
             <span class="badge badge-{{ stat.status }}">
             {{ stat.status }}: {{ stat.total }}
         </span>
         {% endfor %}
     </div>
 
-    {# Filter #}
+    {# ===== STATUS FILTER FORM ===== #}
+    {#
+    GET form that filters orders by status
+    Submits to the same route (order_list) with status parameter
+
+    Example URLs generated:
+    - All orders: /orders
+    - Pending only: /orders?status=pending
+    - Confirmed only: /orders?status=confirmed
+    #}
     <form method="get" action="{{ path('order_list') }}">
         <label>Status:</label>
         <select name="status">
+            {#
+            "Alle" (All) option with empty value
+            When selected, no status filter is applied
+            #}
             <option value="">Alle</option>
+
+            {#
+            Status options with conditional 'selected' attribute
+
+            Ternary operator: {{ condition ? 'if_true' : 'if_false' }}
+
+            currentStatus == 'pending': Check if 'pending' is currently filtered
+            ? 'selected' : '': If true, add 'selected' attribute
+
+            This ensures the dropdown shows the currently filtered status
+            #}
             <option value="pending" {{ currentStatus == 'pending' ? 'selected' : '' }}>Pending</option>
             <option value="confirmed" {{ currentStatus == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
             <option value="preparing" {{ currentStatus == 'preparing' ? 'selected' : '' }}>Preparing</option>
@@ -30,7 +80,7 @@
         <button type="submit">Filter</button>
     </form>
 
-    {# Order-Table #}
+    {# ===== ORDERS TABLE ===== #}
     <table>
         <thead>
         <tr>
@@ -44,20 +94,79 @@
         </tr>
         </thead>
         <tbody>
+        {#
+        Loop through orders
+
+        Special feature: {% else %} clause executes if 'orders' is empty
+        #}
         {% for order in orders %}
             <tr>
+                {#
+                ORDER ID COLUMN
+                Direct property access: {{ order.id }}
+                #}
                 <td>{{ order.id }}</td>
+
+                {#
+                Twig filter: |date('format')
+                Formats a DateTime object as a string
+                #}
                 <td>{{ order.date|date('d.m.Y') }}</td>
+
+                {#
+                Twig calls the getter method: $order->getBuyer()->getName()
+                #}
                 <td>{{ order.buyer.name }}</td>
+
                 <td>
                     {% for meal in order.meals %}
+                        {#
+                        Display meal name
+                        Add comma if not the last item
+
+                        {% if not loop.last %}, {% endif %}
+                        - Checks if this is NOT the last iteration
+                        - If not last, adds a comma separator
+
+                        Example:
+                        Iteration 1 (not last): "Pizza, "
+                        Iteration 2 (not last): "Burger, "
+                        Iteration 3 (last): "Salad" (no comma)
+                        #}
                         {{ meal.name }}{% if not loop.last %}, {% endif %}
                     {% endfor %}
                 </td>
                 <td>{{ order.price }}€</td>
+
+                {#
+                STATUS COLUMN
+
+                Display status with dynamic CSS class for color-coding
+
+                class="badge badge-{{ order.status }}":
+                - Concatenates status value into class name
+                - Example: status = "pending" → class="badge badge-pending"
+                - CSS can style each status differently:
+                  .badge-pending { background: yellow; }
+                  .badge-confirmed { background: blue; }
+                  .badge-delivered { background: green; }
+                #}
                 <td><span class="badge badge-{{ order.status }}">{{ order.status }}</span></td>
+
                 <td>
+                    {#
+                    ACTION COLUMN - STATUS UPDATE FORM
+                    - Generates URL like: /orders/5/status
+                    - {id: order.id} passes the order ID as route parameter
+                    #}
                     <form method="post" action="{{ path('order_update_status', {id: order.id}) }}">
+                        {#
+                        Dropdown with all possible statuses
+
+                        Note: No 'selected' attribute here
+                        - Could enhance by pre-selecting current status
+                        - Example: <option value="pending" {{ order.status == 'pending' ? 'selected' : '' }}>
+                        #}
                         <select name="status">
                             <option value="pending">Pending</option>
                             <option value="confirmed">Confirmed</option>
@@ -71,16 +180,50 @@
                 </td>
             </tr>
         {% else %}
+            {#
+            FALLBACK for empty results
+            Executes if 'orders' collection is empty
+            #}
             <tr>
                 <td colspan="3">Keine Orders gefunden.</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-    {# Pagination #}
+
+    {# ===== PAGINATION ===== #}
+    {# Only show pagination if there's more than 1 page #}
     {% if totalPages > 1 %}
         <nav>
+            {#
+            Loop through page numbers: 1 to totalPages
+
+            Syntax: {% for variable in start..end %}
+            Example: If totalPages = 5, this creates: 1, 2, 3, 4, 5
+            #}
             {% for p in 1..totalPages %}
+                {#
+                Create link for each page number
+
+                path() function: Generates URL for a named route
+                First parameter: Route name ('data_meals_list')
+                Second parameter: URL parameters (object/array)
+
+                app.request.query.all: Gets ALL current URL parameters
+                |merge({page: p}): MERGE filter adds/overwrites 'page' parameter
+
+                Example result:
+                Current URL: /meals/list?name=Pizza&sortBy=name
+                Page 2 link: /meals/list?name=Pizza&sortBy=name&page=2
+
+                This preserves all filters when changing pages!
+
+                class attribute uses ternary operator:
+                p == currentPage: If this is the current page
+                ? 'active' : '': Add 'active' class, otherwise no class
+
+                The 'active' class can be styled with CSS to highlight current page
+                #}
                 <a href="{{ path('order_list', app.request.query.all|merge({page: p})) }}"
                    class="{{ p == currentPage ? 'active' : '' }}">{{ p }}</a>
             {% endfor %}

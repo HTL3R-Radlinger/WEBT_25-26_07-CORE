@@ -1,13 +1,113 @@
+{#
+===== FORM START =====
+
+form_start(form, options): Generates opening <form> tag
+
+What it generates:
+<form method="POST" action="/current/url" onsubmit="return showSubmitInfo()">
+
+Parameters:
+1. form: The FormView object
+2. {attr: {...}}: HTML attributes to add to <form> tag
+
+attr: {onsubmit: "return showSubmitInfo()"}
+- Adds custom JavaScript handler
+- onsubmit fires when form is submitted
+- "return showSubmitInfo()": Calls JavaScript function below
+- If function returns false, form submission is cancelled
+- If function returns true, form submission continues
+
+Why use form_start() instead of plain <form>?
+- Automatically sets correct action URL
+- Automatically adds CSRF token for security
+- Automatically sets method (POST by default)
+- Can customize via options parameter
+#}
 {{ form_start(form, {
     attr: {
         onsubmit: "return showSubmitInfo()"
     }
 }) }}
+
+    {#
+    ===== NAME FIELD =====
+
+    form_row(form.name): Renders complete field with label, input, and errors
+
+    What it generates:
+    <div class="form-group">
+        <label for="meal_name">Meal Name</label>
+        <input type="text" id="meal_name" name="meal[name]" required>
+        <span class="error">Error messages appear here if any</span>
+    </div>
+
+    form_row() is a convenience function that combines:
+    - form_label(): Generates <label>
+    - form_widget(): Generates <input> or other form element
+    - form_errors(): Generates error messages
+
+    Alternative manual approach:
+    {{ form_label(form.name) }}
+    {{ form_widget(form.name) }}
+    {{ form_errors(form.name) }}
+
+    But form_row() does all three at once!
+    #}
     {{ form_row(form.name) }}
 
+{#
+===== ALLERGENS FIELD (CUSTOM LAYOUT) =====
+
+Why custom layout instead of form_row()?
+- We want checkboxes inside a <fieldset> with a <legend>
+- This is better semantic HTML for grouped checkboxes
+- Improves accessibility for screen readers
+
+We manually combine the three parts:
+1. form_label(): Label/legend
+2. form_widget(): The actual checkboxes
+3. form_errors(): Error messages
+#}
 <fieldset>
+    {#
+    form_label(form.allergens): Generates label text only
+
+    Normally generates: <label>Allergens</label>
+    But we put it inside <legend> for better semantics
+
+    <fieldset> + <legend> is the proper HTML structure for:
+    - Radio button groups
+    - Checkbox groups
+    - Related form fields
+    #}
     <legend>{{ form_label(form.allergens) }}</legend>
+
+    {#
+    form_widget(form.allergens): Generates the actual form inputs
+
+    For allergens field (configured in MealType as expanded: true),
+    this generates multiple checkboxes:
+
+    <input type="checkbox" name="meal[allergens][]" value="1"> A
+    <input type="checkbox" name="meal[allergens][]" value="2"> C
+    <input type="checkbox" name="meal[allergens][]" value="3"> D
+    ...
+
+    The [] in the name makes it an array in PHP
+    PHP receives: ['allergens' => [1, 3, 5]]
+
+    If expanded: false in MealType, would generate a <select multiple>
+    #}
     {{ form_widget(form.allergens) }}
+
+    {#
+    form_errors(form.allergens): Displays validation errors
+
+    If validation fails (e.g., data type mismatch), shows error message:
+    <span class="error">This value is not valid.</span>
+
+    If no errors, outputs nothing
+    #}
     {{ form_errors(form.allergens) }}
 </fieldset>
 
@@ -17,10 +117,24 @@
     {{ button_label|default('Save') }}
 </button>
 
+{# ===== JAVASCRIPT FOR ALERT ===== #}
 <script>
     function showSubmitInfo() {
         alert("{{ alert_text }}");
-        return true;
+        return true;  // Allow form submission to continue
     }
 </script>
+
+{#
+===== FORM END =====
+
+form_end(form): Generates closing </form> tag and any remaining fields
+
+What it does:
+1. Renders any form fields not yet rendered
+   (e.g., hidden fields, CSRF token)
+
+2. Outputs closing </form> tag
+
+#}
 {{ form_end(form) }}

@@ -5,6 +5,25 @@
 {% block content %}
     <h1>Create New Meal</h1>
 
+    {#
+    ===== INCLUDE SHARED FORM TEMPLATE =====
+
+    include() function: Renders another template inside this one
+
+    Syntax: {{ include('template_path', {variables}) }}
+
+    First parameter: 'admin/meal/form.html.twig'
+    - Path to the template to include
+    - Relative to templates/ directory
+    - This is a reusable form template used by both add and edit pages
+
+    Second parameter: Object with variables to pass to included template
+    {
+        form: form,                           // The FormView object
+        button_label: 'Create Meal',          // Custom button text for add page
+        alert_text: 'Meal successfully added!' // Custom success message
+    }
+    #}
     {{ include('admin/meal/form.html.twig', {
         form: form,
         button_label: 'Create Meal',
