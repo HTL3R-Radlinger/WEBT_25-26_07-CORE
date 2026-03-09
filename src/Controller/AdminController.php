@@ -52,7 +52,6 @@ final class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
-            $this->addFlash('success', 'Meal edited successfully!');
             return $this->redirectToRoute('data_meals_list');
         }
 
@@ -70,9 +69,6 @@ final class AdminController extends AbstractController
     {
         $em->remove($meal);
         $em->flush();
-
-        $this->addFlash('success', 'Meal deleted successfully!');
-
         return $this->redirectToRoute('meal_delete');
     }
 }

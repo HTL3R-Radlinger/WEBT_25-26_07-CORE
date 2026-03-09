@@ -268,3 +268,7 @@ footer {
         border-radius: 12px;
     }
 }
+
+.active {
+    color: red;
+}

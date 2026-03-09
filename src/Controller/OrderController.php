@@ -17,7 +17,7 @@ final class OrderController extends AbstractController
     public function list(Request $request, OrderRepository $orderRepository): Response
     {
         $status = $request->query->get('status');
-        $buyerId = $request->query->get('buyer') ? (int)$request->query->get('buyer') : null;
+        $buyerId = $request->query->get('buyer') ? (int)$request->query->get('buyer') : null; // ?buyer=X
         $sortBy = $request->query->get('sortBy', 'date');
         $order = $request->query->get('order', 'DESC');
         $page = max((int)$request->query->get('page', 1), 1);
@@ -39,13 +39,8 @@ final class OrderController extends AbstractController
     public function updateStatus(Order $order, Request $request, EntityManagerInterface $em): Response
     {
         $newStatus = $request->request->get('status');
-        try {
-            $order->setStatus($newStatus);
-            $em->flush();
-            $this->addFlash('success', 'Order status updated!');
-        } catch (\InvalidArgumentException $e) {
-            $this->addFlash('error', $e->getMessage());
-        }
+        $order->setStatus($newStatus);
+        $em->flush();
 
         return $this->redirectToRoute('order_list');
     }
