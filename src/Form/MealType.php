@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * MealType - Form definition for creating/editing Meal entities
@@ -37,8 +38,11 @@ class MealType extends AbstractType
             // --- FIELD 1: Meal Name ---
             // Creates a text input field for the meal name
             ->add('name', TextType::class, [
-                'label' => 'Meal Name',      // Label shown above the input
-                'required' => true,           // Field is mandatory
+                'label' => 'Meal Name',
+                'required' => true,
+                'constraints' => [
+                    new Assert\Length(max: 255),
+                ],
             ])
 
             // --- FIELD 2: Allergens (Multi-select Checkboxes) ---
@@ -82,6 +86,9 @@ class MealType extends AbstractType
             ->add('nutritionalInfo', TextType::class, [
                 'label' => 'Nutritional Info (e.g. "Calories: 700")',  // Helpful label with example
                 'required' => true,                                     // Field is mandatory
+                'constraints' => [
+                    new Assert\Length(max: 255),
+                ],
             ]);
     }
 
